@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+        {% block titl %}
+            
+        {% endblock%}   
+ 
+</head>
+<body>
+
+    
+
+{% if user.is_authenticated %}
+ <li>{{ user }}</li>
+ <li><a href="{% url 'logout' %}?next=/">Logout</a></li>
+ <br>
+ {% block content %}
+
+{% endblock %}
+
+
+{% else %}
+        <a href="{% url 'login' %}?next=/">Already have an account?</a>
+        <br>
+        <a href="{% url 'signup' %}">Create an account!</a>
+{% endif %}
+
+
+
+
+</body>
+</html>  
