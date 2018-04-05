@@ -8,6 +8,8 @@ from .models import Conversation, Message
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
+        print("room name is %s"%self.room_name)
+        print("scope usr is %s"%str(self.scope['user']))
         self.room_group_name = 'chat_%s' % self.room_name
         
         #start of models logic
@@ -16,17 +18,24 @@ class ChatConsumer(WebsocketConsumer):
         #print(type(self.scope['user']))
         self.by_user = User.objects.get(username = self.scope['user'])
         for usr in self.users:
-            if usr is not str(self.scope['user']):
+            print("for loop usr is %s"%usr)
+            if usr != str(self.scope['user']):
                 self.to_username = usr
+        print("tousername is  %s"%self.to_username)
 
         self.to_user = User.objects.get(username = self.to_username)
+        print(self.by_user)
+        print(self.to_user)
         try:
             self.conv_object = Conversation.objects.get(started_by = self.by_user, sent_to = self.to_user)
         except:
             try:
                 self.conv_object = Conversation.objects.get(started_by = self.to_user, sent_to = self.by_user)
             except:
-                self.conv_object = Conversation(started_by = self.by_user, sent_to = self.to_user)
+                print(self.by_user)
+                print(self.to_user)
+                self.conv_object = Conversation(started_by = self.by_user, sent_to = self.to_user, chatroom = self.room_name)
+
                 self.conv_object.save()
 
         #end of models logic
@@ -57,7 +66,7 @@ class ChatConsumer(WebsocketConsumer):
         #model logic
         #print(self.by_user.username)
         sender = User.objects.get(username = self.scope['user'])
-        print(sender)
+        #print(sender)
 
         self.msg_object = Message(conv_id = self.conv_object, text = message,
                                  sender = User.objects.get(username = self.scope['user']),

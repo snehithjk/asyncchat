@@ -1,4 +1,6 @@
 {% extends "core/base.html" %}
+{% load humanize %}
+{% load i18n %}
 {% block titl %}
 	<title>Home</title>
 {% endblock %}
@@ -12,6 +14,10 @@
     What chat room would you like to enter?<br/>
     <input id="room-name-input" type="text" size="100"/><br/>
     <input id="room-name-submit" type="button" value="Enter"/>
+    <h3>Your recent chats</h3>
+    {% for chat in recent_chats %}
+    <li><a href="{% url 'room' chat %}"> {{ chat }} </a> &nbsp;<small>{{ chat.timestamp|naturaltime }}</small></li>
+    {% endfor %}
 </body>
 <script>
     var firstuser = '{{ chat_by }}';
